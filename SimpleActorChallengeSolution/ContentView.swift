@@ -21,7 +21,21 @@ actor SimpleTeam {
         players.append(player)
     }
 }
-actor Player: Equatable {
+
+actor Player: Equatable, Hashable {
+    
+    static func ==(lhs: Player, rhs: Player) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    nonisolated var hashValue: Int {
+        return id
+    }
+    
+    nonisolated func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
     let id: Int
     var name: String
     var salary: Decimal
@@ -37,22 +51,21 @@ actor Player: Equatable {
         }
         salary += amount
     }
-    static func ==(lhs: Player, rhs: Player) -> Bool {
-        lhs.id == rhs.id
-    }
 }
 actor Team {
-    var players: [Player]
-    init(initialPlayers: [Player]) {
+    
+    var players: Set<Player>
+    
+    init(initialPlayers: Set<Player>) {
         self.players = initialPlayers
     }
     func transfer(player: Player, to otherTeam: Team) async {
-        guard let index = players.firstIndex(of: player) else { return }
-        players.remove(at: index)
+        guard players.contains(player) else { return }
+        players.remove(player)
         await otherTeam.receive(player)
     }
     func receive(_ player: Player) {
-        players.append(player)
+        players.insert(player)
     }
 }
 
