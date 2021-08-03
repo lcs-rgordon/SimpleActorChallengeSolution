@@ -55,6 +55,23 @@ actor Team {
         players.append(player)
     }
 }
+
+actor DataStore {
+    
+    var username = "Anonymous"
+    var friends = [String]()
+    var highScores = [Int]()
+    var favourites = Set<Int>()
+    
+}
+
+// Alternative to using await to access an actor's external mutable state
+func debugLog(dataStore: isolated DataStore) {
+    print("Username: \(dataStore.username)")
+    print("Friends: \(dataStore.friends)")
+    print("High score: \(dataStore.highScores)")
+    print("Favourites: \(dataStore.favourites)")
+}
     
 
 struct ContentView: View {
